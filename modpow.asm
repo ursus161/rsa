@@ -45,18 +45,7 @@ modpow:
     mov rdi, rdx
 
     jmp .loop1
-.skip_multiply:
-     
-    shr rsi, 1
-
-    ; base = base * base % mod
-    mov rax, rdi        ; RAX = base
-    mul rdi             ; RDX:RAX = base * base
-    div r12             ; RDX = (base * base) % mod
-    mov rdi, rdx        ; base = remainder
-
-    jmp .loop1
-
+ 
 .done:
     mov rax, rcx        ; return result
 
