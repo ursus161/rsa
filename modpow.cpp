@@ -18,6 +18,7 @@ int modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
     return result;
 }
 
+extern uint64_t modpow_barrett(uint64_t base, uint64_t exp, uint64_t mod);
 extern "C" uint64_t modpow(uint64_t base, uint64_t exponent, uint64_t modulus);
 
 
@@ -36,12 +37,10 @@ bool valid(uint64_t base, uint64_t exponent, uint64_t modul){
 
 int main(){
     uint64_t base, exponent, modul;
-    cout << "Enter base: ";
-    cin >> base;
-    cout << "Enter exponent: ";
-    cin >> exponent;
-    cout << "Enter modulus: ";
-    cin >> modul;
+    base = 987654321;
+    exponent = 123456789;
+    modul = 1000000007;
+    
     
     auto start = chrono::high_resolution_clock::now();
     volatile uint64_t result;
@@ -63,6 +62,15 @@ int main(){
     auto duration_cpp = chrono::duration_cast<chrono::microseconds>(end_cpp - start_cpp);
 
  
+    auto start_barrett = chrono::high_resolution_clock::now();
+    volatile uint64_t barrett_result;
+    for(int t = 0; t < 1000000; t++){
+        barrett_result = modpow_barrett(base, exponent, modul);
+    }
+    auto end_barrett = chrono::high_resolution_clock::now();
+    auto duration_barrett = chrono::duration_cast<chrono::microseconds>(end_barrett - start_barrett);
+
+
     if(!valid(base, exponent, modul)){
         return 1;
     }
@@ -70,6 +78,7 @@ int main(){
     cout << "Result: " << result << endl;
     cout << "cpp Time for 1M calls: " << duration_cpp.count() << " microseconds" << endl;
     cout << "asm Time for 1M calls: " << duration.count() << " microseconds" << endl;
+    cout << "barrett Time for 1M calls: " << duration_barrett.count() << " microseconds" << endl;
     return 0;
 
 }

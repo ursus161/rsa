@@ -22,10 +22,11 @@ modpow:
     ; result = 1
     mov rcx, 1          ; RCX = result
 
+    align 16
 .loop1: 
     test rsi, rsi ; daca RAX e 0
     jz .done
-
+    
     ; result * base % mod  
     mov rax, rcx        ; RAX = result
     mul rdi             ; RDX:RAX = result * base
