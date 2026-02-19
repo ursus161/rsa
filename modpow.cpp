@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
+uint64_t modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
     uint64_t result = 1;
     base = base % modul;
     while (exponent > 0) {
@@ -25,14 +25,26 @@ extern "C" uint64_t modpow(uint64_t base, uint64_t exponent, uint64_t modulus);
 bool valid(uint64_t base, uint64_t exponent, uint64_t modul){
     auto cpp_result = modpow_cpp(base, exponent, modul);
     auto result = modpow(base, exponent, modul);
+    auto barrett_result = modpow_barrett(base, exponent, modul);
 
-    if(result != cpp_result){
+    if(result != cpp_result || result != barrett_result){
         cout << "Error: Results do not match!" << endl;
         cout << "cpp Result: " << cpp_result << endl;
         cout << "asm Result: " << result << endl;
+        cout << "barrett Result: " << barrett_result << endl;
         return 0;
     }
     return 1;
+}
+
+auto benchmark(uint64_t (*func)(uint64_t, uint64_t, uint64_t), uint64_t base, uint64_t exponent, uint64_t modul) {
+    auto start = chrono::high_resolution_clock::now();
+    volatile uint64_t result;
+    for (int t = 0; t < 1000000; t++) {
+        result = func(base, exponent, modul);
+    }
+    auto end = chrono::high_resolution_clock::now();
+    return chrono::duration_cast<chrono::microseconds>(end - start).count();
 }
 
 int main(){
@@ -42,47 +54,19 @@ int main(){
     modul = 1000000007;
     
     
-    auto start = chrono::high_resolution_clock::now();
-    volatile uint64_t result;
-    //volatile is used to prevent the compiler from optimizing
-
-    for(int t = 0; t < 1000000; t++){
-        result = modpow(base, exponent, modul);
-    }
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::microseconds>(end - start);
-
-
-    auto start_cpp = chrono::high_resolution_clock::now();
-    volatile uint64_t cpp_result;
-    for(int t = 0; t < 1000000; t++){
-        cpp_result = modpow_cpp(base, exponent, modul);
-    }
-    auto end_cpp = chrono::high_resolution_clock::now();
-    auto duration_cpp = chrono::duration_cast<chrono::microseconds>(end_cpp - start_cpp);
-
- 
-    auto start_barrett = chrono::high_resolution_clock::now();
-    volatile uint64_t barrett_result;
-    for(int t = 0; t < 1000000; t++){
-        barrett_result = modpow_barrett(base, exponent, modul);
-    }
-    auto end_barrett = chrono::high_resolution_clock::now();
-    auto duration_barrett = chrono::duration_cast<chrono::microseconds>(end_barrett - start_barrett);
-
-
-    if(!valid(base, exponent, modul)){
+    if(!valid(base, exponent, modul))
         return 1;
-    }
+    
 
-    cout << "Result: " << result << endl;
-    cout << "cpp Time for 1M calls: " << duration_cpp.count() << " microseconds" << endl;
-    cout << "asm Time for 1M calls: " << duration.count() << " microseconds" << endl;
-    cout << "barrett Time for 1M calls: " << duration_barrett.count() << " microseconds" << endl;
+    uint64_t duration_cpp = benchmark(modpow_cpp, base, exponent, modul);
+    uint64_t duration = benchmark(modpow, base, exponent, modul);
+    uint64_t duration_barrett = benchmark(modpow_barrett, base, exponent, modul);
+
+    //cout<< "result: " << result << " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
+    cout << "cpp Time for 1M calls: " << duration_cpp << " microseconds" << endl;
+    cout << "asm Time for 1M calls: " << duration << " microseconds" << endl;
+    cout << "barrett Time for 1M calls: " << duration_barrett << " microseconds" << endl;
     return 0;
 
 }
-// nasm -f elf64 modpow.asm -o modpow.o
-// g++ -o test modpow.cpp modpow.o -no-pie
-// ./test
  
