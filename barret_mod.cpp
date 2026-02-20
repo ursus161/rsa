@@ -1,10 +1,12 @@
 #include <cstdint>
 
 uint64_t modpow_barrett(uint64_t base, uint64_t exp, uint64_t mod)
-{
-    if (mod == 1) return 0;
+{ //base ^ exp mod mod insa incercam sa minimizam numarul de operatii de impartire prin procedee matematice (barrett reduction)
+  // ideea principala e : (a*b * mu) >> 128 = (a*b * 2^128/mod) >> 128 = a*b / mod
+// am intampinat probleme cu overflow ul, asa ca impart operatiile in parti mai mici, apoi le cuplez
+    if (mod == 1) return 0; 
 
-    __uint128_t mu = ((__uint128_t)1 << 127) / mod << 1;
+    __uint128_t mu = ((__uint128_t)1 << 127) / mod << 1; // mu = 2^128 / mod , shiftam repetat cu 127 si 1 ca sa ocolesc limitarea de 128 biti a lui __uint128_t
     uint64_t mu_hi = (uint64_t)(mu >> 64);
     uint64_t mu_lo = (uint64_t)mu;
 

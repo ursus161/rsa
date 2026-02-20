@@ -9,8 +9,9 @@ uint64_t modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
     base = base % modul;
     while (exponent > 0) {
         
-            result = (uint64_t)((__uint128_t)result * base % modul)*(exponent & 1) + result * (exponent & 1 ^ 1);
-            //branchless implementation
+            if (exponent & 1)
+                result = (uint64_t)((__uint128_t)result * base % modul);
+            //implementarea branchless se misca cu aprox. 5% mai incet, asa ca lasam compilatorul sa faca optimizarile
 
         exponent = exponent >> 1;
         base = (uint64_t)((__uint128_t)base * base % modul);
