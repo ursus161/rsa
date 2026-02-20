@@ -8,18 +8,18 @@ uint64_t modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
     uint64_t result = 1;
     base = base % modul;
     while (exponent > 0) {
-       
-        result = ((result * base) % modul)*(exponent & 1) + result * ((exponent & 1) ^ 1);
-        //branchless  
+        
+            result = (uint64_t)((__uint128_t)result * base % modul)*(exponent & 1) + result * (exponent & 1 ^ 1);
+            //branchless implementation
 
         exponent = exponent >> 1;
-        base = (base * base) % modul;
+        base = (uint64_t)((__uint128_t)base * base % modul);
     }
     return result;
 }
 
 extern uint64_t modpow_barrett(uint64_t base, uint64_t exp, uint64_t mod);
-extern "C" uint64_t modpow(uint64_t base, uint64_t exponent, uint64_t modulus);
+extern "C" uint64_t modpow(uint64_t base, uint64_t exponent, uint64_t modulus); //asta e functia asm 
 
 
 bool valid(uint64_t base, uint64_t exponent, uint64_t modul){
@@ -38,7 +38,7 @@ bool valid(uint64_t base, uint64_t exponent, uint64_t modul){
 }
 
 auto benchmark(uint64_t (*func)(uint64_t, uint64_t, uint64_t), uint64_t base, uint64_t exponent, uint64_t modul) {
-    auto start = chrono::high_resolution_clock::now();
+    auto start = chrono::high_resolution_clock::now();  
     volatile uint64_t result;
     for (int t = 0; t < 1000000; t++) {
         result = func(base, exponent, modul);
@@ -46,23 +46,28 @@ auto benchmark(uint64_t (*func)(uint64_t, uint64_t, uint64_t), uint64_t base, ui
     auto end = chrono::high_resolution_clock::now();
     return chrono::duration_cast<chrono::microseconds>(end - start).count();
 }
-
+#include <cmath>
 int main(){
+
     uint64_t base, exponent, modul;
     base = 987654321;
-    exponent = 123456789;
-    modul = 1000000007;
-    
+    exponent = 12345678967;
+    modul = (1ULL << 63) - 1; //un numar prim mare, pentru a testa eficienta algoritmului
+    // merge cu mod < 2^32
+
     
     if(!valid(base, exponent, modul))
         return 1;
     
+    auto cpp_result = modpow_cpp(base, exponent, modul);
+    auto result = modpow(base, exponent, modul);
+    auto barrett_result = modpow_barrett(base, exponent, modul);
 
     uint64_t duration_cpp = benchmark(modpow_cpp, base, exponent, modul);
     uint64_t duration = benchmark(modpow, base, exponent, modul);
     uint64_t duration_barrett = benchmark(modpow_barrett, base, exponent, modul);
 
-    //cout<< "result: " << result << " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
+    cout<< "result: " << result << " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
     cout << "cpp Time for 1M calls: " << duration_cpp << " microseconds" << endl;
     cout << "asm Time for 1M calls: " << duration << " microseconds" << endl;
     cout << "barrett Time for 1M calls: " << duration_barrett << " microseconds" << endl;
