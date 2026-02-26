@@ -4,6 +4,15 @@
 
 using namespace std;
 
+uint64_t bruteforce(uint64_t base, uint64_t exponent, uint64_t modul) {
+   
+    uint64_t res = 1; 
+    for (uint64_t i = 0; i < exponent; i++) {
+        res *= base;
+        res %= modul; //pentru a preveni overflow-ul
+    }
+    return res % modul;
+}
 uint64_t modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
     uint64_t result = 1;
     base = base % modul;
@@ -54,7 +63,7 @@ int main(){
     base = 987654321;
     exponent = 12345678967;
     modul = (1ULL << 63) - 1; //un numar prim mare, pentru a testa eficienta algoritmului
-    // merge cu mod < 2^32
+    // merge cu mod < 2^63
 
     
     if(!valid(base, exponent, modul))
@@ -63,15 +72,19 @@ int main(){
     auto cpp_result = modpow_cpp(base, exponent, modul);
     auto result = modpow(base, exponent, modul);
     auto barrett_result = modpow_barrett(base, exponent, modul);
+    //auto bruteforce_result = bruteforce(base, exponent, modul);
 
+  //  uint64_t bruteforce_duration = benchmark(bruteforce, base, exponent, modul);
     uint64_t duration_cpp = benchmark(modpow_cpp, base, exponent, modul);
     uint64_t duration = benchmark(modpow, base, exponent, modul);
     uint64_t duration_barrett = benchmark(modpow_barrett, base, exponent, modul);
 
-    cout<< "result: " << result << " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
+    //cout<< "brute force result: " << bruteforce_result << " square&multiply result: " << result << " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
     cout << "cpp Time for 1M calls: " << duration_cpp << " microseconds" << endl;
     cout << "asm Time for 1M calls: " << duration << " microseconds" << endl;
     cout << "barrett Time for 1M calls: " << duration_barrett << " microseconds" << endl;
+   // cout<< "bruteforce Time for 1M calls: " << bruteforce_duration << " microseconds" << endl;
+
     return 0;
 
 }
