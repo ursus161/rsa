@@ -1,2 +1,4 @@
 modpow
 modpow.o
+*.elf
+*.o

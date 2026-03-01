@@ -4,14 +4,6 @@
 
 using namespace std;
 
-uint64_t bruteforce(uint64_t base, uint64_t exponent, uint64_t modul) {
-    uint64_t res = 1;
-    base %= modul;
-    for (uint64_t i = 0; i < exponent; i++) {
-        res = (uint64_t)((__uint128_t)res * base % modul);
-    }
-    return res;
-}
 
 uint64_t modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
     uint64_t result = 1;
@@ -29,18 +21,16 @@ uint64_t modpow_cpp(uint64_t base, uint64_t exponent, uint64_t modul) {
 }
 
 extern uint64_t modpow_barrett(uint64_t base, uint64_t exp, uint64_t mod);
-extern "C" uint64_t modpow(uint64_t base, uint64_t exponent, uint64_t modulus); //asta e functia asm 
 
 
 bool valid(uint64_t base, uint64_t exponent, uint64_t modul){
     auto cpp_result = modpow_cpp(base, exponent, modul);
-    auto result = modpow(base, exponent, modul);
+   
     auto barrett_result = modpow_barrett(base, exponent, modul);
 
-    if(result != cpp_result || result != barrett_result){
+    if(cpp_result != barrett_result){
         cout << "Error: Results do not match!" << endl;
         cout << "cpp Result: " << cpp_result << endl;
-        cout << "asm Result: " << result << endl;
         cout << "barrett Result: " << barrett_result << endl;
         return 0;
     }
@@ -65,25 +55,20 @@ int main(){
     modul =  (1ULL << 63) - 1; //un numar prim mare, pentru a testa eficienta algoritmului
     // merge cu mod < 2^63
 
-    
-    if(!valid(base, exponent, modul))
-        return 1;
+    // if(!valid(base, exponent, modul))
+    //     return 1;
     
     auto cpp_result = modpow_cpp(base, exponent, modul);
-    auto result = modpow(base, exponent, modul);
     auto barrett_result = modpow_barrett(base, exponent, modul);
-  //  auto bruteforce_result = bruteforce(base, exponent, modul);
 
-  //  uint64_t bruteforce_duration = benchmark(bruteforce, base, exponent, modul);
+
     uint64_t duration_cpp = benchmark(modpow_cpp, base, exponent, modul);
-    uint64_t duration = benchmark(modpow, base, exponent, modul);
     uint64_t duration_barrett = benchmark(modpow_barrett, base, exponent, modul);
 
-   // cout<< "brute force result: " << bruteforce_result << " square&multiply result: " << result << " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
+
+    cout<< " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
     cout << "cpp Time for 1M calls: " << duration_cpp << " microseconds" << endl;
-    cout << "asm Time for 1M calls: " << duration << " microseconds" << endl;
     cout << "barrett Time for 1M calls: " << duration_barrett << " microseconds" << endl;
-  //  cout<< "bruteforce Time for 1M calls: " << bruteforce_duration << " microseconds" << endl;
 
     return 0;
 
