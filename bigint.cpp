@@ -15,6 +15,7 @@ private:
     uint64_t limbs[MAX_LIMBS];
     int size; //  limb-uri sunt folosite efectiv
 
+
 public:
 
 
@@ -143,9 +144,18 @@ public:
 
 
     friend BigInt operator-(const BigInt& a, const BigInt& b) {
-
-      return a + (BigInt(0) - b); // folosesc adunarea pentru a face scaderea, evit problemele de carry
+    BigInt result;
+    uint64_t borrow = 0;
+    for (int i = 0; i < MAX_LIMBS; i++) {
+        uint64_t ai = a.limbs[i];
+        uint64_t bi = b.limbs[i] + borrow;
+        borrow = (ai < bi) ? 1 : 0;
+        result.limbs[i] = ai - bi;
     }
+    result.size = MAX_LIMBS;
+    result.trim(); 
+    return result;
+}
 
     //de implementat print-ul
 };
