@@ -15,6 +15,12 @@ private:
     uint64_t limbs[MAX_LIMBS];
     int size; //  limb-uri sunt folosite efectiv
 
+     void trim() {
+
+        while (size > 1 && limbs[size - 1] == 0)
+            size--;
+
+}
 
 public:
 
@@ -50,12 +56,7 @@ public:
         if (size == 0) size = 1;
         }
 
-    void trim() {
-
-        while (size > 1 && limbs[size - 1] == 0)
-            size--;
-
-}
+   
 
         bool isZero() const {
             return size == 1 && limbs[0] == 0;
@@ -149,7 +150,7 @@ public:
     for (int i = 0; i < MAX_LIMBS; i++) {
         uint64_t ai = a.limbs[i];
         uint64_t bi = b.limbs[i] + borrow;
-        borrow = (ai < bi) ? 1 : 0;
+        borrow = (ai < bi) ? 1 : 0; // daca ai < bi, atunci trebuie sa imprumutam 1 de la urmatorul limb
         result.limbs[i] = ai - bi;
     }
     result.size = MAX_LIMBS;
