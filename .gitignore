@@ -2,3 +2,4 @@ modpow
 modpow.o
 *.elf
 *.o
+bigint

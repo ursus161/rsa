@@ -43,3 +43,5 @@ uint64_t modpow_barrett(uint64_t base, uint64_t exp, uint64_t mod)
 
     return result;
 }
+
+//to do , ladder montgomery multiplication

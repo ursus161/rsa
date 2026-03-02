@@ -1,14 +1,22 @@
 #include <iostream>
 #include <cstdint>
 #include <cstring>
- 
+#include <string>
+#include <algorithm>
 
-static const int MAX_LIMBS = 64; // 4096 biti max
+using namespace std;
+
+
 class BigInt {
-public:
+private:
+        
+    static const int MAX_LIMBS = 64; // 4096 biti max
 
     uint64_t limbs[MAX_LIMBS];
     int size; //  limb-uri sunt folosite efectiv
+
+public:
+
 
     BigInt() {
 
@@ -67,6 +75,10 @@ public:
         return (size - 1) * 64 + (64 - __builtin_clzll(limbs[size - 1]));
     }
 
+
+    int getSize() const {
+        return size;
+    }
     //partea de operatori 
 
     bool operator==(const BigInt& b) const {
@@ -78,6 +90,10 @@ public:
 
     return true;
 }
+
+    bool operator!=(const BigInt& b) const {
+        return !(*this == b);
+    }
 
     bool operator<(const BigInt& b) const {
 
@@ -91,7 +107,11 @@ public:
                 
         return false; // egale
     }
+    bool operator<=(const BigInt& b) const {
 
+        return *this < b || *this == b;  
+
+    }
     // in rest folosesc supraincarcarea lui < pentru simplitate 
     bool operator>=(const BigInt& b) const {
 
@@ -101,14 +121,52 @@ public:
 
     bool operator>(const BigInt& b) const {
         return b < *this;
+        
     }
 
+ 
+
+    friend BigInt operator+(const BigInt& a, const BigInt& b) {
+
+        BigInt result;
+        uint64_t carry = 0;
+
+        for (int i = 0; i < MAX_LIMBS; i++) {
+            __uint128_t sum = (__uint128_t)a.limbs[i] + b.limbs[i] + carry;
+            result.limbs[i] = (uint64_t)sum;
+            carry = sum >> 64;
+        }
+        result.size = MAX_LIMBS;
+        result.trim();
+        return result;
 };
 
-int main() {
-    BigInt a(12345678901234567890ULL);
-    BigInt b(9876543210987654321ULL);
 
-    
+    friend BigInt operator-(const BigInt& a, const BigInt& b) {
+
+      return a + (BigInt(0) - b); // folosesc adunarea pentru a face scaderea, evit problemele de carry
+    }
+
+    //de implementat print-ul
+};
+int main() {
+  
+        cout<< "BigInt(5) bit length: " << BigInt(5).bitLength() << endl;
+        BigInt val = 0x20;
+
+        //0x20 =  32 = 100000
+     cout<<(val==BigInt("0x10"))<<endl;
+       for (int i = 0; i < 128; i++) {
+
+        int bit = val.getBit(i);
+             if(bit)
+                cout << "Bit " << i << ": " << bit << endl;
+        }
+
+
+        // auto sum = BigInt("0xFFFFFFFFFFFFFFFF") + BigInt(1);
+
+
     return 0;   
+
 }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cstdint>
 #include <chrono>
-
+#include <iomanip>
 using namespace std;
 
 
@@ -69,6 +69,7 @@ int main(){
     cout<< " cpp_result: " << cpp_result << " barrett_result: " << barrett_result << endl;
     cout << "cpp Time for 1M calls: " << duration_cpp << " microseconds" << endl;
     cout << "barrett Time for 1M calls: " << duration_barrett << " microseconds" << endl;
+    cout<<"improvement regarding cpp: "<<fixed<<setprecision(2)<<100.0*(duration_cpp-duration_barrett)/duration_cpp<<"%"<<endl;
 
     return 0;
 

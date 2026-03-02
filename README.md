@@ -16,4 +16,5 @@ Barrett alg replaces `div` (20-90 cycles) with `mul` + `shift` + `sub`, achievin
 
 ```bash
 make clean && make run
+
 ```
