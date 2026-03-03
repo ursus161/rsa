@@ -14,13 +14,12 @@ private:
 
     uint64_t limbs[MAX_LIMBS];
     int size; //  limb-uri sunt folosite efectiv
-
-     void trim() {
+ 
+    void trim() {
 
         while (size > 1 && limbs[size - 1] == 0)
             size--;
-
-}
+    }
 
 public:
 
@@ -62,6 +61,7 @@ public:
             return size == 1 && limbs[0] == 0;
         }
 
+
     bool getBit(int i) const {
 
         int limb_idx = i / 64;
@@ -70,6 +70,7 @@ public:
         return (limbs[limb_idx] >> bit_idx) & 1;
 
     }
+
     int bitLength() const {
 
         if (isZero()) return 0; // __builtin_clzll(0) e undefined behavior
@@ -145,6 +146,7 @@ public:
 
 
     friend BigInt operator-(const BigInt& a, const BigInt& b) {
+        
     BigInt result;
     uint64_t borrow = 0;
     for (int i = 0; i < MAX_LIMBS; i++) {
@@ -158,26 +160,63 @@ public:
     return result;
 }
 
-    //de implementat print-ul
+    friend ostream& operator<<(ostream& os, const BigInt& a) { //e prin referinta pentru ca obiectul ostream nu are copy constructor
+    for (int i = a.size - 1; i >= 0; i--)
+        os << hex << a.limbs[i]; //imi afiseaza limburile in hexa
+    os << dec; // daca as vrea sa afisez fara acest 
+    return os;
+}
+
+    BigInt operator<<( uint64_t shift) const {
+        BigInt result;
+        int limb_shift = shift / 64;
+        int bit_shift = shift % 64;
+
+        for (int i = (*this).getSize() - 1; i >= 0; i--) {
+            
+
+        }
+    }
+
+
+friend BigInt operator*(const BigInt& a, const BigInt& b) {
+    BigInt result;
+    for (int i = 0; i < a.getSize(); i++) {
+        uint64_t carry = 0;
+        for (int j = 0; j < b.getSize(); j++) {
+
+            __uint128_t prod = (__uint128_t)a.limbs[i] * b.limbs[j] + result.limbs[i + j] + carry;
+            result.limbs[i + j] = (uint64_t)prod;
+
+            carry = (uint64_t)(prod >> 64);
+        }
+        result.limbs[i + b.getSize()] += carry;
+    }
+    result.size = a.getSize() + b.getSize();
+    result.trim();
+    return result;
+}
+
+
+
 };
+
+
+
 int main() {
   
         cout<< "BigInt(5) bit length: " << BigInt(5).bitLength() << endl;
         BigInt val = 0x20;
 
-        //0x20 =  32 = 100000
+        //0x20 =  32 = 100000   
      cout<<(val==BigInt("0x10"))<<endl;
-       for (int i = 0; i < 128; i++) {
+   
+        cout<<"hex val: " << BigInt(12) * BigInt(2)<< endl;
 
-        int bit = val.getBit(i);
-             if(bit)
-                cout << "Bit " << i << ": " << bit << endl;
-        }
-
-
-        // auto sum = BigInt("0xFFFFFFFFFFFFFFFF") + BigInt(1);
-
-
+        cout<<5<<endl;
+       BigInt a("10000000000000005");   // am pe limb1 = 00..1 si pe limb0= 00..005 si imi da trim si face 15, to fix maine
+cout << a;   
+ 
     return 0;   
 
 }
