@@ -3,6 +3,8 @@
 #include <cstring>
 #include <string>
 #include <algorithm>
+#include <iomanip>
+
 
 using namespace std;
 
@@ -161,14 +163,20 @@ public:
 }
 
     friend ostream& operator<<(ostream& os, const BigInt& a) { //e prin referinta pentru ca obiectul ostream nu are copy constructor
-    for (int i = a.size - 1; i >= 0; i--)
-        os << hex << a.limbs[i]; //imi afiseaza limburile in hexa
+
+        os << hex << a.limbs[a.size - 1];
+
+    for (int i = a.size - 2; i >= 0; i--)
+        os << setfill('0') << setw(16)<< hex  << a.limbs[i]; //imi afiseaza limburile in hexa
+
+        // care a fost fixul din commitul anterior? *vezi blame* 
+        //metoda trim imi elimina tot ce inseamna leading 0 astfel ca metodele functiile setfil si setw imi incarca pe cele 16 spoturi fiecare caracter iar in caz ca am ceva vid pune 0
+
     os << dec; // daca as vrea sa afisez fara acest 
     return os;
 }
 
-    BigInt operator<<( uint64_t shift) const {
-        BigInt result;
+    BigInt operator<<( uint64_t shift) const { // shift left  
         int limb_shift = shift / 64;
         int bit_shift = shift % 64;
 
