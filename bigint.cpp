@@ -158,17 +158,15 @@ public:
 
 
     friend BigInt operator-(const BigInt& a, const BigInt& b) {
-        
     BigInt result;
     uint64_t borrow = 0;
     for (int i = 0; i < MAX_LIMBS; i++) {
-        uint64_t ai = a.limbs[i];
-        uint64_t bi = b.limbs[i] + borrow;
-        borrow = (ai < bi) ? 1 : 0; // daca ai < bi, atunci trebuie sa imprumutam 1 de la urmatorul limb
-        result.limbs[i] = ai - bi;
+        __uint128_t sub = (__uint128_t)a.limbs[i] - b.limbs[i] - borrow; //in caz de oxFFFF.FFF+1 as avea overflow si iau pe 128 biti ca sa trunchiez iar dupa
+        result.limbs[i] = (uint64_t)sub;
+        borrow = (sub >> 127) & 1;
     }
     result.size = MAX_LIMBS;
-    result.trim(); 
+    result.trim();
     return result;
 }
 
@@ -236,7 +234,12 @@ int main() {
        BigInt a("10000000000000005");   // am pe limb1 = 00..1 si pe limb0= 00..005 si imi da trim si face 15, to fix maine
         BigInt b=a;
         cout<<"a este: " <<a<<endl;
-        cout<<"b este: " << b;
+        cout<<"b este: " << b<<endl;
+
+
+        BigInt x = BigInt("0xFFFFFFFFFFFFFFFF")+BigInt(1); //MERGEEEEEEE (f'ing finally) 
+
+        cout<<"test la bucata de operator " << x;
     return 0;   
 
 }
