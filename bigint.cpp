@@ -57,6 +57,16 @@ public:
         if (size == 0) size = 1;
         }
 
+
+    BigInt(const BigInt &obj) { // copy constructor 
+
+        (*this).size = obj.getSize();
+
+        memcpy(limbs, obj.limbs, sizeof(limbs)); // pe fiecare byte din limbs imi pune ce era pe obj.limbs 
+
+        
+
+    }
    
 
         bool isZero() const {
@@ -184,6 +194,7 @@ public:
             
 
         }
+        return 0;
     }
 
 
@@ -223,8 +234,9 @@ int main() {
 
         cout<<5<<endl;
        BigInt a("10000000000000005");   // am pe limb1 = 00..1 si pe limb0= 00..005 si imi da trim si face 15, to fix maine
-cout << a;   
- 
+        BigInt b=a;
+        cout<<"a este: " <<a<<endl;
+        cout<<"b este: " << b;
     return 0;   
 
 }
