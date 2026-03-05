@@ -239,6 +239,11 @@ int main() {
 
         BigInt x = BigInt("0xFFFFFFFFFFFFFFFF")+BigInt(1); //MERGEEEEEEE (f'ing finally) 
 
+         BigInt numar(16);
+         
+         numar = x;
+
+        cout<<numar<<endl; // merge fara operator de copiere? 
         cout<<"test la bucata de operator " << x;
     return 0;   
 
