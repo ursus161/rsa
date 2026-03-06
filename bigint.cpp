@@ -68,7 +68,7 @@ public:
 
     }
    
-
+    
         bool isZero() const {
             return size == 1 && limbs[0] == 0;
         }
@@ -156,6 +156,19 @@ public:
         return result;
 };
 
+
+    friend BigInt operator=(const BigInt& a){
+        
+            if (this == &obj) return *this; //sa nu verific degeaba
+            
+            memcpy(limbs, obj.limbs, sizeof(limbs));
+            size = obj.size;
+
+
+            return *this;
+
+        
+    }
 
     friend BigInt operator-(const BigInt& a, const BigInt& b) {
     BigInt result;
