@@ -197,6 +197,8 @@ public:
     return os;
 }
 
+    // !! ceva ce as vrea sa subliniez la aceste shifturi este ca pe tipuri predefinite precum uint64_t, am UD pe lucruri precum 5>>64, insa eu am 0 aici, vreau sa minimizez UD urile
+
     BigInt operator>>( uint64_t shift) const { // shift right
         int limb_shift = shift / 64;
         int bit_shift = shift % 64;
@@ -204,10 +206,16 @@ public:
 
         for (int i = (*this).getSize() - limb_shift- 1;  i >= 0; i--) {
             
-                result.limbs[i] = limbs[i+ limb_shift] >> bit_shift;
-                result.limbs[i] |= limbs[i + limb_shift + 1] << (64 - bit_shift);
+                 result.limbs[i] = limbs[i+ limb_shift] >> bit_shift;
+                 if(limb_shift+i+1 < size)//ptr prima conditie citesc garbage altfel, prob segfault chiar in func de compiler 
+                    {
+                        result.limbs[i] |= limbs[i + limb_shift + 1] << (64 - (bit_shift)*(bit_shift>0));
+                     }
+                    // aici chiar pot sa am <<64 UD
+             
                 
         }
+        result.size = max(1, size-limb_shift); //evident nu pot sa am size<1, asta trebuie sa iau pentru cazuri precum 5>>128 unde as ajunge la size = -2, dar result = 0, deci size=1
         return result;
     }
     
@@ -297,6 +305,9 @@ int main() {
     cout << "128 >> 1 = " << (BigInt(128) >> 1) << endl;  // 0x40
     cout << "1 << 64 = " << (BigInt(1) << 64) << endl;    //2^64 (prea lung sa scriu ca hexa)
     cout<< "il shiftez inapoi cu 64 biti (ar trb deci sa mi dea 1): " << ((BigInt(1) << 64) >> 64)<<endl;
+
+    cout<<"shiftez la dreapta sa mai incerc cate cv "<< (BigInt(64) >> 2);
+    //100000 >> 2 = 1000 == 16 in dec deci 0x10
     return 0;  
 
 }
