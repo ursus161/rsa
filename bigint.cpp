@@ -263,6 +263,7 @@ friend BigInt operator*(const BigInt& a, const BigInt& b) {
 }
 
 
+~BigInt() {}
 
 };
 
@@ -308,6 +309,8 @@ int main() {
 
     cout<<"shiftez la dreapta sa mai incerc cate cv "<< (BigInt(64) >> 2);
     //100000 >> 2 = 1000 == 16 in dec deci 0x10
+
+    cout<<endl<<"afis "<<BigInt(120000000000);
     return 0;  
 
 }
