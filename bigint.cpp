@@ -154,13 +154,13 @@ public:
         result.size = MAX_LIMBS;
         result.trim();
         return result;
-};
+}
 
 
-    friend BigInt operator=(const BigInt& a){
+     BigInt operator=(const BigInt& obj){
         
             if (this == &obj) return *this; //sa nu verific degeaba
-            
+
             memcpy(limbs, obj.limbs, sizeof(limbs));
             size = obj.size;
 
@@ -200,15 +200,35 @@ public:
     BigInt operator<<( uint64_t shift) const { // shift left  
         int limb_shift = shift / 64;
         int bit_shift = shift % 64;
+        BigInt result;
+
+        for (int i = (*this).getSize() - limb_shift- 1;  i >= 0; i--) {
+            
+                result.limbs[i] = limbs[i+ limb_shift] >> bit_shift;
+                result.limbs[i] |= limbs[i + limb_shift + 1] << (64 - bit_shift);
+                
+        }
+        return result;
+    }
+    
+    BigInt operator>>(uint64_t shift) const { //shift right
+
+        int limb_shift = shift / 64;
+        int bit_shift = shift % 64;
+        BigInt result;
 
         for (int i = (*this).getSize() - 1; i >= 0; i--) {
             
 
+             result.limbs[i] = limbs[i- limb_shift] << bit_shift;
+                result.limbs[i] |= limbs[i - limb_shift + 1] >> (64 - bit_shift);
+                
+
         }
-        return 0;
+        return result;
+    
+    
     }
-
-
 friend BigInt operator*(const BigInt& a, const BigInt& b) {
     BigInt result;
     for (int i = 0; i < a.getSize(); i++) {
@@ -257,7 +277,10 @@ int main() {
          numar = x;
 
         cout<<numar<<endl; // merge fara operator de copiere? 
-        cout<<"test la bucata de operator " << x;
+        cout<<"test la bucata de operator " << x<<endl;
+
+        cout<< "shift "<<(BigInt(16) << 1);
+        cout<< "shift la dreapta "<< (BigInt(16) >> 1);
     return 0;   
 
 }
