@@ -157,7 +157,7 @@ public:
 }
 
 
-     BigInt operator=(const BigInt& obj){
+     BigInt operator=(const BigInt& obj){ //aveam o greseala aici, o facusem functie friend insa trebuie sa fie metoda pentru ca altfel compilatorul mi ar face un operator= default, ergo coliziune
         
             if (this == &obj) return *this; //sa nu verific degeaba
 
@@ -197,7 +197,7 @@ public:
     return os;
 }
 
-    BigInt operator<<( uint64_t shift) const { // shift left  
+    BigInt operator>>( uint64_t shift) const { // shift right
         int limb_shift = shift / 64;
         int bit_shift = shift % 64;
         BigInt result;
@@ -211,21 +211,28 @@ public:
         return result;
     }
     
-    BigInt operator>>(uint64_t shift) const { //shift right
+    BigInt operator<<(uint64_t shift) const { //shift left 
 
         int limb_shift = shift / 64;
         int bit_shift = shift % 64;
         BigInt result;
-
-        for (int i = (*this).getSize() - 1; i >= 0; i--) {
+        uint64_t carry = 0; 
+        for (int i = 0; i <=(*this).getSize() - 1; i++) {
             
 
-             result.limbs[i] = limbs[i- limb_shift] << bit_shift;
-                result.limbs[i] |= limbs[i - limb_shift + 1] >> (64 - bit_shift);
+             result.limbs[i + limb_shift] = (limbs[i] << bit_shift) | carry; // mut i pe i+limbul de shift apoi adaug carry ul prin | carry
+            carry =( bit_shift > 0)*(limbs[i] >> (64 - bit_shift)); //carry ul e ce da overflow pe un limb si se muta pe urmatorul, dcriu ca mux 
+            //dau update la carry dupa, ca sa pun mai intai carry ul initial
                 
 
         }
+
+        result.limbs[size + limb_shift] = carry*(carry!=0); //asta e ult carry, tot mux pt constant time
+
+        result.size = size + limb_shift + (carry!=0);
+        result.trim();
         return result;
+        
     
     
     }
@@ -280,7 +287,16 @@ int main() {
         cout<<"test la bucata de operator " << x<<endl;
 
         cout<< "shift "<<(BigInt(16) << 1);
-        cout<< "shift la dreapta "<< (BigInt(16) >> 1);
-    return 0;   
+        cout<< "shift la dreapta "<< (BigInt(128) >> 1)<<endl;
+
+        
+        //aici am 128 shiftat cu 1 pozitie, deci in hexa imi vine un 16^2. deci 0x100, observam ca e corect
+
+
+            cout << "16 << 1 = " << (BigInt(16) << 1) << endl;   // x20
+    cout << "128 >> 1 = " << (BigInt(128) >> 1) << endl;  // 0x40
+    cout << "1 << 64 = " << (BigInt(1) << 64) << endl;    //2^64 (prea lung sa scriu ca hexa)
+    cout<< "il shiftez inapoi cu 64 biti (ar trb deci sa mi dea 1): " << ((BigInt(1) << 64) >> 64)<<endl;
+    return 0;  
 
 }
