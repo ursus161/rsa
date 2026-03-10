@@ -271,7 +271,7 @@ friend BigInt operator*(const BigInt& a, const BigInt& b) {
 }
 
 
-pair<BigInt, BigInt> divmod(const BigInt& divisor) const {
+pair<BigInt, BigInt> divmod(const BigInt& divisor) const { // SURSA PENTRU IMPLEMENTAREA LOGICII ALGORITMULUI: https://en.wikipedia.org/wiki/Division_algorithm
 
 
     if (divisor.isZero()) throw runtime_error("Division by zero"); //evident nu pot sa impart la 0
@@ -364,7 +364,15 @@ int main() {
     cout<<"shiftez la dreapta sa mai incerc cate cv "<< (BigInt(64) >> 2);
     //100000 >> 2 = 1000 == 16 in dec deci 0x10
 
-    cout<<endl<<"afis "<<BigInt(120000000000);
+    cout<<endl<<"afis "<<BigInt(5192876767) * BigInt(2);
+    cout<<endl;
+    BigInt copie(numar);
+    cout<< "afis  "<<copie<<endl;
+
+    cout<<"numar "<< numar<< " "<<numar.bitLength()<<endl;
+    cout<< "test divmod "<<(BigInt(64)/BigInt(10))<<" "<<(BigInt(64)%BigInt(10));
+
+
     return 0;  
 
 }
