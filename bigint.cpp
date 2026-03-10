@@ -83,6 +83,14 @@ public:
 
     }
 
+    void setBit(int i) { //antetul e explicit, setez bitul de pe pozitia i de la lsb incepand numaratoarea
+
+    limbs[i / 64] |= (1ULL << (i % 64));
+
+
+}
+
+
     int bitLength() const {
 
         if (isZero()) return 0; // __builtin_clzll(0) e undefined behavior
@@ -157,7 +165,7 @@ public:
 }
 
 
-     BigInt operator=(const BigInt& obj){ //aveam o greseala aici, o facusem functie friend insa trebuie sa fie metoda pentru ca altfel compilatorul mi ar face un operator= default, ergo coliziune
+     BigInt& operator=(const BigInt& obj){ //aveam o greseala aici, o facusem functie friend insa trebuie sa fie metoda pentru ca altfel compilatorul mi ar face un operator= default, ergo coliziune
         
             if (this == &obj) return *this; //sa nu verific degeaba
 
@@ -263,7 +271,53 @@ friend BigInt operator*(const BigInt& a, const BigInt& b) {
 }
 
 
-~BigInt() {}
+pair<BigInt, BigInt> divmod(const BigInt& divisor) const {
+
+
+    if (divisor.isZero()) throw runtime_error("Division by zero"); //evident nu pot sa impart la 0
+    if (*this < divisor) return {BigInt(0), *this}; // daca am 1/7 de exemplu , o sa am cat 0 si rest 7
+
+    BigInt catul;
+    BigInt rest;
+
+    for (int i = bitLength() - 1; i >= 0; i--) { // aici o iau de la msb, cumva ca pe hartie incep shiftarea la stanga si iau bit cu bit 
+
+        rest = rest << 1; // fac iar lsb zero si l adaug in if ul urm, cobor ca pe "foaie" cumva urmatorul bit 
+
+        if (getBit(i))
+            rest.limbs[0] |= 1; // aici adaug ....1 daca pe bit ul din pasul asta e se
+
+        if (rest >= divisor) { // matematic not good
+
+            uint64_t limb_id = i/64;
+            uint64_t bit_id =  i%64;
+
+
+            rest = rest - divisor;
+            catul.setBit(i);
+        }
+    }
+
+    catul.size = (bitLength() / 64) + 1; // bitlen // 64 sunt limburile pline si +1 e restul din limbul final
+
+    catul.trim(); // aici as putea avea un limb de genul [1111..1] si sa nu mai am nimic pe urmatorul, iar prin linia 301 as avea size 2 cand trebuie 1, insa corectez asta din trim()
+    rest.trim();
+    return {catul, rest};
+}
+
+BigInt operator/(const BigInt& obj) const{
+
+    return divmod(obj).first; 
+
+}
+
+
+BigInt operator%(const BigInt obj) const{
+    
+    
+    return divmod(obj).second;
+}
+~BigInt() {} //n am alocat nimic pe heap, nici nu sterg insa scriu destructorul BigInt din motive de cerinte de proiect 
 
 };
 
