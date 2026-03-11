@@ -13,6 +13,7 @@ class BigInt {
 private:
         
     static const int MAX_LIMBS = 64; // 4096 biti max
+    static bool hexmode;
 
     uint64_t limbs[MAX_LIMBS];
     int size; //  limb-uri sunt folosite efectiv
@@ -68,7 +69,11 @@ public:
 
     }
    
-    
+        static void setHex(){ hexmode = true; }
+
+        static void setDec(){ hexmode = false;  } //le fac statice ptr ca vreau toate afisarile sa fie ori hex ori in dec, nu vreau sa am unele intr un fel iar altele in alt fel
+
+
         bool isZero() const {
             return size == 1 && limbs[0] == 0;
         }
@@ -317,6 +322,38 @@ BigInt operator%(const BigInt obj) const{
     
     return divmod(obj).second;
 }
+
+
+//varianta de barret precedenta imi rula pe 64 de biti, nu scala pentru obiecte de tip BigInt
+
+//sursa logicii de implementare a algoritmului : https://www.nayuki.io/page/barrett-reduction-algorithm
+
+BigInt modpow(const BigInt& exp, const BigInt& mod) const {
+
+    if (mod == BigInt(1)) return BigInt(0);
+
+    int k = mod.bitLength();
+    BigInt mu = (BigInt(1) << (2 * k)) / mod;
+
+    auto reduce = [&](const BigInt& a, const BigInt& b) -> BigInt {
+        BigInt z = a * b;
+        BigInt q = (z * mu) >> (2 * k);
+        BigInt r = z - q * mod;
+        while (r >= mod) r = r - mod;
+        return r;
+    };
+
+    BigInt result(1);
+    BigInt base = *this % mod;
+
+    for (int i = exp.bitLength() - 1; i >= 0; i--) {
+        result = reduce(result, result);
+        if (exp.getBit(i))
+            result = reduce(result, base);
+    }
+    return result;
+}
+
 ~BigInt() {} //n am alocat nimic pe heap, nici nu sterg insa scriu destructorul BigInt din motive de cerinte de proiect 
 
 };
@@ -372,7 +409,7 @@ int main() {
     cout<<"numar "<< numar<< " "<<numar.bitLength()<<endl;
     cout<< "test divmod "<<(BigInt(64)/BigInt(10))<<" "<<(BigInt(64)%BigInt(10));
 
-
+    cout<<endl<<"test ptr modpow si divmod "<<BigInt(2).modpow(BigInt(10), BigInt(1000)); //2^10 mod 1000
     return 0;  
 
 }
