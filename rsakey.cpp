@@ -8,21 +8,80 @@ class RSAKey {
 
 private:
 
-    const static BigInt e   ;
+    static const BigInt e  ; //o sa ramana mereu acelasi, e standard asa ca nu l mai recreez de fiecare data
     BigInt p,q;
     BigInt n;  
     BigInt d;
-   static const int bitSize = 4096;
+    const int bitSize;
     char *owner;
-    static int keyCount;
+    static int keyCount; //nr de chei totale
 
 public:
 
-    RSAKey(){
-        owner = nullptr;
+   RSAKey(const BigInt& p, const BigInt& q, const char* ownerName)  : bitSize(p.bitLength() + q.bitLength()) {
+
+        this->p = p;
+        this->q = q;
+        n = p * q;
         
+        owner = new char[strlen(ownerName) + 1];
+        strcpy(owner, ownerName);
+        
+        keyCount++;
     }
+
+
+      RSAKey(const RSAKey& obj) :   bitSize(obj.bitSize) {// copy constructorul
+
+        this->p = obj.p;
+        this->q = obj.q;
+        this->n = obj.n;
+        this->d = obj.d;
+
+        owner = new char[strlen(obj.owner) + 1];
+        strcpy(owner, obj.owner);
+
+        keyCount++;
+    }
+
+        RSAKey& operator=(const RSAKey& obj) {
+
+            if (this == &obj) return *this;
+
+            this->p = obj.p;
+            this->q = obj.q;
+
+            this->n = obj.n;
+            this->d = obj.d;
+
+            delete[] owner; // obiectul daca nu l eliberez acm mi s ar elibera memoria de abia la final de lifetime 
+
+            owner = new char[strlen(obj.owner) + 1];
+            strcpy(owner, obj.owner);
+
+            return *this;
+}
+
+
+        void generate()
+        {
+            n = p*q;
+            BigInt phi = (p - BigInt(1)) * (q - BigInt(1));
+            d = modInv(e,phi);  
+        }
+
+
+
+        //de implementat modinv, o sa fie algoritmul lui euclid exitins
+
+
 
     ~RSAKey(){ if (owner) delete[] owner;}
 
-};
+
+
+};  
+
+const BigInt RSAKey::e = BigInt(65537);
+
+int RSAKey::keyCount = 0;

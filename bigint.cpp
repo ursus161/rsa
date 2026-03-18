@@ -340,7 +340,7 @@ BigInt modpow(const BigInt& exp, const BigInt& mod) const {
         BigInt q = (z * mu) >> (2 * k);
         BigInt r = z - q * mod;
         while (r >= mod) r = r - mod;
-        return r;
+        return r;   
     };
 
     BigInt result(1);
