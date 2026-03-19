@@ -1,13 +1,12 @@
 all:
-	 
-	g++ -O3 -o modpow modpow.cpp barret_mod.cpp  -no-pie
-	g++  -o rsakey rsakey.cpp  -no-pie
+	g++ -O3 -o modpow modpow.cpp barret_mod.cpp -no-pie
+	g++ -o rsa main.cpp rsakey.cpp bigint.cpp -no-pie
 
 clean:
-	rm -f modpow bigint rsakey
+	rm -f modpow rsa
 
 run: all
 	./modpow
 
-run_rsakey: all
-	./rsakey
+run_rsa: all
+	./rsa
