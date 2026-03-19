@@ -1,10 +1,10 @@
+#pragma once
 #include <iostream>
 #include <cstdint>
 #include <cstring>
 #include <string>
 #include <algorithm>
 #include <iomanip>
-
 
 using namespace std;
 
@@ -358,58 +358,58 @@ BigInt modpow(const BigInt& exp, const BigInt& mod) const {
 
 };
 
+bool BigInt::hexmode = false;
 
-
-int main() {
+// int main() {
   
-        cout<< "BigInt(5) bit length: " << BigInt(5).bitLength() << endl;
-        BigInt val = 0x20;
+//         cout<< "BigInt(5) bit length: " << BigInt(5).bitLength() << endl;
+//         BigInt val = 0x20;
 
-        //0x20 =  32 = 100000   
-     cout<<(val==BigInt("0x10"))<<endl;
+//         //0x20 =  32 = 100000   
+//      cout<<(val==BigInt("0x10"))<<endl;
    
-        cout<<"hex val: " << BigInt(12) * BigInt(2)<< endl;
+//         cout<<"hex val: " << BigInt(12) * BigInt(2)<< endl;
 
-        cout<<5<<endl;
-       BigInt a("10000000000000005");   // am pe limb1 = 00..1 si pe limb0= 00..005 si imi da trim si face 15, to fix maine
-        BigInt b=a;
-        cout<<"a este: " <<a<<endl;
-        cout<<"b este: " << b<<endl;
+//         cout<<5<<endl;
+//        BigInt a("10000000000000005");   // am pe limb1 = 00..1 si pe limb0= 00..005 si imi da trim si face 15, to fix maine
+//         BigInt b=a;
+//         cout<<"a este: " <<a<<endl;
+//         cout<<"b este: " << b<<endl;
 
 
-        BigInt x = BigInt("0xFFFFFFFFFFFFFFFF")+BigInt(1); //MERGEEEEEEE (f'ing finally) 
+//         BigInt x = BigInt("0xFFFFFFFFFFFFFFFF")+BigInt(1); //MERGEEEEEEE (f'ing finally) 
 
-         BigInt numar(16);
+//          BigInt numar(16);
          
-         numar = x;
+//          numar = x;
 
-        cout<<numar<<endl; // merge fara operator de copiere? 
-        cout<<"test la bucata de operator " << x<<endl;
+//         cout<<numar<<endl; // merge fara operator de copiere? 
+//         cout<<"test la bucata de operator " << x<<endl;
 
-        cout<< "shift "<<(BigInt(16) << 1);
-        cout<< "shift la dreapta "<< (BigInt(128) >> 1)<<endl;
+//         cout<< "shift "<<(BigInt(16) << 1);
+//         cout<< "shift la dreapta "<< (BigInt(128) >> 1)<<endl;
 
         
-        //aici am 128 shiftat cu 1 pozitie, deci in hexa imi vine un 16^2. deci 0x100, observam ca e corect
+//         //aici am 128 shiftat cu 1 pozitie, deci in hexa imi vine un 16^2. deci 0x100, observam ca e corect
 
 
-            cout << "16 << 1 = " << (BigInt(16) << 1) << endl;   // x20
-    cout << "128 >> 1 = " << (BigInt(128) >> 1) << endl;  // 0x40
-    cout << "1 << 64 = " << (BigInt(1) << 64) << endl;    //2^64 (prea lung sa scriu ca hexa)
-    cout<< "il shiftez inapoi cu 64 biti (ar trb deci sa mi dea 1): " << ((BigInt(1) << 64) >> 64)<<endl;
+//             cout << "16 << 1 = " << (BigInt(16) << 1) << endl;   // x20
+//     cout << "128 >> 1 = " << (BigInt(128) >> 1) << endl;  // 0x40
+//     cout << "1 << 64 = " << (BigInt(1) << 64) << endl;    //2^64 (prea lung sa scriu ca hexa)
+//     cout<< "il shiftez inapoi cu 64 biti (ar trb deci sa mi dea 1): " << ((BigInt(1) << 64) >> 64)<<endl;
 
-    cout<<"shiftez la dreapta sa mai incerc cate cv "<< (BigInt(64) >> 2);
-    //100000 >> 2 = 1000 == 16 in dec deci 0x10
+//     cout<<"shiftez la dreapta sa mai incerc cate cv "<< (BigInt(64) >> 2);
+//     //100000 >> 2 = 1000 == 16 in dec deci 0x10
 
-    cout<<endl<<"afis "<<BigInt(5192876767) * BigInt(2);
-    cout<<endl;
-    BigInt copie(numar);
-    cout<< "afis  "<<copie<<endl;
+//     cout<<endl<<"afis "<<BigInt(5192876767) * BigInt(2);
+//     cout<<endl;
+//     BigInt copie(numar);
+//     cout<< "afis  "<<copie<<endl;
 
-    cout<<"numar "<< numar<< " "<<numar.bitLength()<<endl;
-    cout<< "test divmod "<<(BigInt(64)/BigInt(10))<<" "<<(BigInt(64)%BigInt(10));
+//     cout<<"numar "<< numar<< " "<<numar.bitLength()<<endl;
+//     cout<< "test divmod "<<(BigInt(64)/BigInt(10))<<" "<<(BigInt(64)%BigInt(10));
 
-    cout<<endl<<"test ptr modpow si divmod "<<BigInt(2).modpow(BigInt(10), BigInt(1000)); //2^10 mod 1000
-    return 0;  
+//     cout<<endl<<"test ptr modpow si divmod "<<BigInt(2).modpow(BigInt(10), BigInt(1000)); //2^10 mod 1000
+//     return 0;  
 
-}
+// }

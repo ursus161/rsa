@@ -3,3 +3,4 @@ modpow.o
 *.elf
 *.o
 bigint
+rsakey
