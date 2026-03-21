@@ -5,7 +5,7 @@ using namespace std;
 
 int main(){
 
-    cout<<BigInt(3)+BigInt(5);
-
+    cout<<BigInt(3)+BigInt(5)<<endl;
+    cout<<RSAKey::modInv(BigInt(3),BigInt(5))<<endl;
     return 0;
-}
+} 
