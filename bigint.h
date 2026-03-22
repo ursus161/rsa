@@ -36,6 +36,7 @@ public:
     void setBit(int i); //antetul e explicit, setez bitul de pe pozitia i de la lsb incepand numaratoarea
     int bitLength() const;
     int getSize() const;
+    uint64_t getLimb(int i) const;
 
     //partea de operatori 
     bool operator==(const BigInt& b) const;

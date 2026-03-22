@@ -66,6 +66,11 @@ int BigInt::getSize() const {
     return size;
 }
 
+
+uint64_t getLimb(int i) const{
+    return limbs[i];
+}
+
 bool BigInt::operator==(const BigInt& b) const {
     if (size != b.size) return false;
     for (int i = size - 1; i >= 0; i--)

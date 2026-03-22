@@ -16,9 +16,9 @@ class Message {
 
         ~Message();
 
-        void toBlocks(Message& msj);
+        void toBlocks();
 
-        void fromBlocks(BigInt* blocks);
+        void fromBlocks();
 
        int getBlockCount() const;
        bool getIsEncrypted() const;
