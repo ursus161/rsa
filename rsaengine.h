@@ -1,15 +1,17 @@
 #pragma once
 #include <iostream>
 #include "rsakey.h"
+
+
 using namespace std;
 
-class RSAEngine(){
+class RSAEngine     {
     private:
 
         RSAKey* currentKey;
         double lastEncryptTime;
         double lastDecryptTime;
-        float* benchmarkRes;
+        float* benchmarkResults;
         int benchmarkCount;
         static int engineCount;
 
@@ -34,4 +36,5 @@ class RSAEngine(){
 
        
     ~RSAEngine();
-}
+};
+
