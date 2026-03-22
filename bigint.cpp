@@ -148,11 +148,10 @@ BigInt BigInt::operator>>(uint64_t shift) const { // shift right
 
     for (int i = (*this).getSize() - limb_shift- 1;  i >= 0; i--) {
         result.limbs[i] = limbs[i+ limb_shift] >> bit_shift;
-        if(limb_shift+i+1 < size)//ptr prima conditie citesc garbage altfel, prob segfault chiar in func de compiler 
+        if(limb_shift+i+1 < (*this).getSize() && bit_shift >  0 ) //ptr prima conditie citesc garbage altfel, prob segfault chiar in func de compiler 
         {
-            result.limbs[i] |= limbs[i + limb_shift + 1] << (64 - (bit_shift)*(bit_shift>0));
+            result.limbs[i] |= limbs[i + limb_shift + 1] << (64 - bit_shift);
         }
-        // aici chiar pot sa am <<64 UD
     }
     result.size = max(1, size-limb_shift); //evident nu pot sa am size<1, asta trebuie sa iau pentru cazuri precum 5>>128 unde as ajunge la size = -2, dar result = 0, deci size=1
     return result;
@@ -177,6 +176,10 @@ BigInt BigInt::operator<<(uint64_t shift) const { //shift left
 
 BigInt operator*(const BigInt& a, const BigInt& b) {
     BigInt result;
+
+    if (a.getSize() + b.getSize() > MAX_LIMBS)
+        throw runtime_error("BigInt overflow in operator* " );
+
     for (int i = 0; i < a.getSize(); i++) {
         uint64_t carry = 0;
         for (int j = 0; j < b.getSize(); j++) {

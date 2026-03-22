@@ -94,7 +94,7 @@ void RSAEngine::benchmark(int iteratii) {
 
     for (int i = 0; i < iteratii; i++) {
         auto start = chrono::high_resolution_clock::now();
-        volatile BigInt result = testMsg.modpow(RSAKey::getE(), currentKey->getN()); /
+        volatile BigInt result = testMsg.modpow(RSAKey::getE(), currentKey->getN()); 
         //asta nu a fost acoperita la lab si ar fi bine sa o mentionez
         //cand rulam teste pentru cod de asamblare, aveam probleme cu g++ care imi eficientiza codul cand voiam sa rulez benchmark uri, fapt care nu se observa decat in objdump uri
         //atunci, pe langa alte lucruri am folosit keyword ul volatile care previne compilatorul sa faca optimizari, forteaza sa faca calculul

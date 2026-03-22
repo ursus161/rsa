@@ -12,7 +12,7 @@ using namespace std;
 class BigInt {
 private:
         
-    static const int MAX_LIMBS = 64; // 4096 biti max
+    static const int MAX_LIMBS = 128; // 4096 biti max, insa am dimensiune dubla ptr ca hamming_weight(n*m) = n+m
     static bool hexmode;
 
     uint64_t limbs[MAX_LIMBS];
@@ -59,7 +59,7 @@ public:
 
     pair<BigInt, BigInt> divmod(const BigInt& divisor) const; // SURSA PENTRU IMPLEMENTAREA LOGICII ALGORITMULUI: https://en.wikipedia.org/wiki/Division_algorithm
     BigInt operator/(const BigInt& obj) const;
-    BigInt operator%(const BigInt obj) const;
+    BigInt operator%(const BigInt& obj) const;
 
     //varianta de barret precedenta imi rula pe 64 de biti, nu scala pentru obiecte de tip BigInt
     //sursa logicii de implementare a algoritmului : https://www.nayuki.io/page/barrett-reduction-algorithm
