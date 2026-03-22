@@ -129,21 +129,12 @@ ostream& operator<<(ostream& os, const RSAEngine& eng){
 
 istream& operator>>(istream& is, RSAEngine& eng){ // din nou, tipul de retur e referinta ptr ca streamurile nu se pot copia ( nu au copy constr ) 
     
-        int p, q;
-        string owner;
+        int iteratii;
+        cout<<"How many times should the benchmark be ran?: ";
 
-        cout << "p: ";
-        is >> p;
-        cout << "q: ";
-        is >> q;
-
-        cout << "Owner: ";
-        is >> owner;
-
-        RSAKey* newKey = new RSAKey(BigInt(p), BigInt(q), owner.c_str());
-        newKey->generate();
-
-        eng.currentKey = newKey; //resetez cheia curenta
+        is>> iteratii;
+        eng.benchmark(iteratii);
+        cout<< eng;
         return is; 
 }
 

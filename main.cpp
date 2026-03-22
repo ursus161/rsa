@@ -12,11 +12,15 @@ int main(){
     key.generate();
     RSAEngine engine(&key);
     engine.benchmark(3);
-    
+
     BigInt criptat = engine.encrypt(BigInt(42));
     cout<<criptat<<endl;
     BigInt decriptat = engine.decrypt(criptat);
     cout<< decriptat << endl;
-    cout << engine;
+    cout << engine << endl;
+
+    cout<<key.getOwner() << endl;
+
+    cin>> engine; 
     return 0;
 } 

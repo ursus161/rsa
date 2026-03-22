@@ -91,7 +91,7 @@ const BigInt& RSAKey::getN() const {
     return this->n;
 }
 
-const BigInt& RSAKey::getD() const {
+const BigInt& RSAKey::getD() const {    
     return this->d;
 }
 

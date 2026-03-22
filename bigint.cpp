@@ -177,7 +177,7 @@ BigInt BigInt::operator<<(uint64_t shift) const { //shift left
 BigInt operator*(const BigInt& a, const BigInt& b) {
     BigInt result;
 
-    if (a.getSize() + b.getSize() > MAX_LIMBS)
+    if (a.getSize() + b.getSize() > BigInt::MAX_LIMBS)
         throw runtime_error("BigInt overflow in operator* " );
 
     for (int i = 0; i < a.getSize(); i++) {
@@ -230,6 +230,6 @@ BigInt BigInt::operator/(const BigInt& obj) const {
     return divmod(obj).first; 
 }
 
-BigInt BigInt::operator%(const BigInt obj) const {
+BigInt BigInt::operator%(const BigInt& obj) const {
     return divmod(obj).second;
 }
