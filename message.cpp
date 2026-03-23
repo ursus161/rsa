@@ -16,6 +16,22 @@ Message::Message(const char* msj){
     isEncrypted = false; //aici asum ca initial nu e criptat, destul de straightforward
 }
 
+Message::Message(const Message& msj) { 
+
+    this->blockCount = msj.blockCount;
+    this->isEncrypted = msj.isEncrypted;
+    strcpy(this->text, msj.text);
+
+    memcpy(this->blocks, msj.blocks, blockCount * sizeof(BigInt));
+       
+
+}
+
+Message& operator=(const Message& msj){
+
+    if (this ==  &msj) return *this;
+}
+
 void Message::toBlocks( ){
 
 
@@ -44,7 +60,7 @@ void Message::fromBlocks() {
 
     text[blockCount] = '\0'; 
     isEncrypted = false; //cu metoda asta o sa reconstruiesc text din blocuri decriptate, automat nu vor mai fi criptate in acest punct al programului
-    
+
 
 }
 

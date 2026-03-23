@@ -33,6 +33,7 @@ BigInt::BigInt(const string& hex) {
 }
 
 BigInt::BigInt(const BigInt &obj) { // copy constructor 
+    
     (*this).size = obj.getSize();
     memcpy(limbs, obj.limbs, sizeof(limbs)); // pe fiecare byte din limbs imi pune ce era pe obj.limbs 
 }

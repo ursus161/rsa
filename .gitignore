@@ -4,3 +4,5 @@ modpow.o
 *.o
 rsakey
 rsa
+barret_mod.cpp
+modpow.cpp
