@@ -119,6 +119,42 @@ const char* Message::getText() const{
 
 }
 
+
+friend ostream& operator<<(ostream& os, const Message& msj) {
+
+    if(msj.isEncrypted) {
+            os<< "Encrypted message ( " << msj.blockCount << " blocks) :"<< endl;
+
+            for (int i =0; i< msj.blockCount ; i++){
+                os<<msj.blocks[i]<<" ";
+
+            }
+    } else{
+        os<<"Message: " << msj.text;
+    }
+    return os;
+}
+
+
+friend istream& operator>>(istream& is,  Message& msj){
+
+    string input;
+    cout<< "Message: ";
+    is>> input;
+
+    delete[] msj.text;
+
+    msj.text= new char[input.size() + 1 ];
+    strcpy( msj.text, input.c_str());
+    msj.isEncrypted = false;
+    
+    return is;
+    
+
+}
+
+
+
 Message::~Message(){
  if (text) delete[] text;       
  if ( blocks) delete[] blocks;
