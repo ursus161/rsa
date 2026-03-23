@@ -20,16 +20,52 @@ Message::Message(const Message& msj) {
 
     this->blockCount = msj.blockCount;
     this->isEncrypted = msj.isEncrypted;
+
+    text = new char[strlen(msj.text) + 1];
     strcpy(this->text, msj.text);
 
-    memcpy(this->blocks, msj.blocks, blockCount * sizeof(BigInt));
+    if (blockCount > 0) {
+        //am adaugat un safeguard fata de commitul anterior, verific blockcount ul 
+
+        blocks = new BigInt[blockCount];
+        memcpy(blocks, msj.blocks, blockCount * sizeof(BigInt));
+
+    } else {
+        blocks = nullptr;
+    }
        
 
 }
 
-Message& operator=(const Message& msj){
+Message& Message::operator=(const Message& msj){
 
     if (this ==  &msj) return *this;
+
+    delete[] text;
+    text = new char[strlen(msj.text) + 1];
+    strcpy(text, msj.text);
+
+    delete[] blocks;
+    blockCount = msj.blockCount;
+    isEncrypted = msj.isEncrypted;
+
+    if (blockCount > 0) {
+
+        blocks = new BigInt[blockCount];
+
+        memcpy(this->blocks, msj.blocks, blockCount* sizeof(BigInt));
+
+        // nu cred ca am zis niciodata in codebase, dar e echivalent cu :
+        // for (int i = 0; i < blockCount; i++)
+        //     blocks[i] = msj.blocks[i];
+
+    } else {
+        blocks = nullptr;
+    }
+
+
+    return *this;
+
 }
 
 void Message::toBlocks( ){
@@ -42,7 +78,7 @@ void Message::toBlocks( ){
 
     for (int i = 0 ; i<blockCount; i++){
 
-        blocks[i] = BigInt((uint64_t) text[i]) //castez ca sa se potr pe constructoru de la BIGINT
+        blocks[i] = BigInt((uint64_t) text[i]);  //castez ca sa se potr pe constructoru de la BIGINT
     }
 
 }
@@ -83,6 +119,7 @@ const char* Message::getText() const{
 
 }
 
-~Message(){
-
+Message::~Message(){
+ if (text) delete[] text;       
+ if ( blocks) delete[] blocks;
 }
