@@ -119,12 +119,15 @@ const char* Message::getText() const{
 
 }
 
+void Message::setEncrypted(bool val) {
+    this->isEncrypted = val;
+}
 
 friend ostream& operator<<(ostream& os, const Message& msj) {
 
     if(msj.isEncrypted) {
             os<< "Encrypted message ( " << msj.blockCount << " blocks) :"<< endl;
-
+ 
             for (int i =0; i< msj.blockCount ; i++){
                 os<<msj.blocks[i]<<" ";
 

@@ -25,6 +25,8 @@ class Message {
        BigInt* getBlocks() const;
        const char* getText() const;
 
+       void setEncrypted(bool val);
+       
       friend ostream& operator<<(ostream& os, const Message& msj);
       friend istream& operator>>(istream& is,  Message& msj);
 

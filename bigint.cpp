@@ -40,6 +40,7 @@ BigInt::BigInt(const BigInt &obj) { // copy constructor
 
 BigInt::~BigInt() {}
 
+bool BigInt::getHexmode() { return hexmode;}
 void BigInt::setHex() { hexmode = true; }
 void BigInt::setDec() { hexmode = false; }
 
@@ -68,7 +69,7 @@ int BigInt::getSize() const {
 }
 
 
-uint64_t getLimb(int i) const{
+uint64_t BigInt::getLimb(int i) const{
     return limbs[i];
 }
 
@@ -138,6 +139,17 @@ BigInt operator-(const BigInt& a, const BigInt& b) {
 }
 
 ostream& operator<<(ostream& os, const BigInt& a) {
+
+    if (a.isZero() ) { 
+        
+    os<< "0";
+    
+    return os;
+    }
+
+    if (BigInt::getHexmode() == true) 
+    {
+        
     os << hex << a.limbs[a.size - 1];
     for (int i = a.size - 2; i >= 0; i--)
         os << setfill('0') << setw(16) << hex << a.limbs[i]; //imi afiseaza limburile in hexa
@@ -145,6 +157,29 @@ ostream& operator<<(ostream& os, const BigInt& a) {
         //metoda trim imi elimina tot ce inseamna leading 0 astfel ca metodele functiile setfil si setw imi incarca pe cele 16 spoturi fiecare caracter iar in caz ca am ceva vid pune 0
     os << dec; // daca as vrea sa afisez fara acest 
     return os;
+
+    }
+
+    else {
+
+          BigInt temp = a; // copie ca l distrug pe temp
+    
+        string digits;
+
+        BigInt ten(10);
+
+        while (!temp.isZero()) {
+            auto [q, r] = temp.divmod(ten); //daca am 43 o sa am 43/10 == [4,3] adica cat si rest 
+            digits += ('0' + r.limbs[0]); //si adun restul la string 
+            temp = q;
+        }
+        reverse(digits.begin(), digits.end()); //o sa am 34 si eu vreau 43 deci rev
+
+        os << digits;
+        return os;
+
+
+    }
 }
 
 BigInt BigInt::operator>>(uint64_t shift) const { // shift right

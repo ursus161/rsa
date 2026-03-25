@@ -57,7 +57,7 @@ BigInt RSAKey::modInv(const BigInt& a, const BigInt& m) {
     return result;
 }
 
-void RSAKey::generate() {
+void RSAKey::generatePrivateKey() {
     n = p*q;
     BigInt phi = (p - BigInt(1)) * (q - BigInt(1));
     d = modInv(e,phi);  

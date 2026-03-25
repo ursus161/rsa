@@ -28,10 +28,10 @@ public:
     RSAKey& operator=(const RSAKey& obj);
 
     ~RSAKey();
-
+    
     static BigInt modInv(const BigInt& a, const BigInt& m);
 
-    void generate();
+    void generatePrivateKey();
 
     friend ostream& operator<<(ostream& os, const RSAKey& key);
     friend istream& operator>>(istream& is, RSAKey& key);

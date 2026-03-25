@@ -28,6 +28,7 @@ public:
     BigInt(const BigInt &obj); // copy constructor 
     ~BigInt(); //n am alocat nimic pe heap, nici nu sterg insa scriu destructorul BigInt din motive de cerinte de proiect 
 
+    static bool getHexmode();
     static void setHex();
     static void setDec(); //le fac statice ptr ca vreau toate afisarile sa fie ori hex ori in dec, nu vreau sa am unele intr un fel iar altele in alt fel
 
