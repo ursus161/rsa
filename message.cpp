@@ -6,6 +6,8 @@
 
 
 
+using namespace std;
+
 Message::Message(const char* msj){
 
 
@@ -85,6 +87,8 @@ void Message::toBlocks( ){
 
 void Message::fromBlocks() { 
 
+    if (!blocks || blockCount == 0) return ;
+
         if (text) delete[] text;
 
         text= new char[blockCount+1];
@@ -123,7 +127,7 @@ void Message::setEncrypted(bool val) {
     this->isEncrypted = val;
 }
 
-friend ostream& operator<<(ostream& os, const Message& msj) {
+ostream& operator<<(ostream& os, const Message& msj) {
 
     if(msj.isEncrypted) {
             os<< "Encrypted message ( " << msj.blockCount << " blocks) :"<< endl;
@@ -139,7 +143,7 @@ friend ostream& operator<<(ostream& os, const Message& msj) {
 }
 
 
-friend istream& operator>>(istream& is,  Message& msj){
+istream& operator>>(istream& is,  Message& msj){
 
     string input;
     cout<< "Message: ";

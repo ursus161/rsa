@@ -36,13 +36,13 @@ RSAKey& RSAKey::operator=(const RSAKey& obj) {
     this->q = obj.q;
 
     this->n = obj.n;
-    this->d = obj.d;
-
+    this->d = obj.d;    
+    this->bitSize  = obj.bitSize;
     delete[] owner; // obiectul daca nu l eliberez acm mi s ar elibera memoria de abia la final de lifetime 
 
     owner = new char[strlen(obj.owner) + 1];
     strcpy(owner, obj.owner);
-
+    
     return *this;
 }
 

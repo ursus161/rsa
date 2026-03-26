@@ -16,7 +16,7 @@ private:
     BigInt p,q;
     BigInt n;  
     BigInt d;
-    const int bitSize;
+    int bitSize;
     char *owner;
     static int keyCount; //nr de chei totale
 

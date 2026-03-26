@@ -107,7 +107,7 @@ ostream& operator<<(ostream& os, const RSAEngine& eng){
 
 
     
-    os<< "RSAEngine # " << eng.engineCount<<endl;
+    os<< "Total engines created: " << eng.engineCount<<endl;
     os<< "Last encrypt time: " << eng.getLastEncryptTime() <<endl;
     os << "Last decrypt time: " << eng.getLastDecryptTime() << endl;
     if (eng.benchmarkCount > 0) //adica daca s a dat vreun benchmark pana acum
