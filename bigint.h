@@ -65,12 +65,15 @@ public:
 
     //varianta de barret precedenta imi rula pe 64 de biti, nu scala pentru obiecte de tip BigInt
     //sursa logicii de implementare a algoritmului : https://www.nayuki.io/page/barrett-reduction-algorithm
-    // modpow ramane inline din cauza lambda-ului intern
+    //in principal evit div urile si mod-urile in favoarea shiturilor si altor operatii ALU: z / mod = (z * mu) >> (2k)
+    //   = (z * 2^(2k) / mod) >> (2k)
+      //  = z * (1/mod) * 2^(2k) / 2^(2k)
+      //  = z / mod
     BigInt modpow(const BigInt& exp, const BigInt& mod) const {
 
         if (mod == BigInt(1)) return BigInt(0);
 
-        int k = mod.bitLength();
+        int k = mod.bitLength(); 
         BigInt mu = (BigInt(1) << (2 * k)) / mod;
 
         auto reduce = [&](const BigInt& a, const BigInt& b) -> BigInt {
