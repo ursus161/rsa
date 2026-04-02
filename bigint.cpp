@@ -217,11 +217,17 @@ BigInt BigInt::operator<<(uint64_t shift) const { //shift left
 
 BigInt operator*(const BigInt& a, const BigInt& b) {
     BigInt result;
-
+    bool choseNaiveImplementation = ( a.getSize() + b.getSize()  <=  BigInt::KARATSUBA_THRESHOLD);
+    
     if (a.getSize() + b.getSize() > BigInt::MAX_LIMBS)
-        throw runtime_error("BigInt overflow in operator* " );
+        throw overflow_error("BigInt overflow in operator* " );
 
-    for (int i = 0; i < a.getSize(); i++) {
+    switch (choseNaiveImplementation)
+    {
+
+    case true:
+        cout<<"NAIVE\n";
+        for (int i = 0; i < a.getSize(); i++) {
         uint64_t carry = 0;
         for (int j = 0; j < b.getSize(); j++) {
             __uint128_t prod = (__uint128_t)a.limbs[i] * b.limbs[j] + result.limbs[i + j] + carry;
@@ -230,9 +236,100 @@ BigInt operator*(const BigInt& a, const BigInt& b) {
         }
         result.limbs[i + b.getSize()] += carry;
     }
+
+    result.size = a.getSize() + b.getSize();
+    result.trim();
+
+    return result;
+
+    
+// Karatsuba algorithm, implementare de complexitate O(n ^ log2(3)), improvement fata de varianta naiva O(n^2)
+// exista un threshold unde overhead ul de la implementarea naiva devine de preferat din cauza overheadului de implementare
+
+case false:
+{   cout<<"KARATSUBA\n";
+    // Karatsuba: a * b = z2 * B^(2*half) + z1 * B^half + z0
+    // unde z0 = a_lo * b_lo, z2 = a_hi * b_hi
+    // z1 = (a_lo + a_hi) * (b_lo + b_hi) - z0 - z2
+    // => 3 inmultiri in loc de 4 => si de aici am practic O(n^log2(3)) ~ O(n^1.585)
+
+    int n = max(a.getSize(), b.getSize());
+    int half = n / 2;
+
+    // Impartim a si b in jumatati: parte_low = limbs[0..half-1], parte_high = limbs[half..size-1]
+    // Practic a = a_hi * B^half + a_lo, unde B = 2^64 (baza unui limb)
+    BigInt a_lo, a_hi, b_lo, b_hi;
+
+    a_lo.size = min(half, a.getSize());
+    for (int i = 0; i < a_lo.size; i++)
+        a_lo.limbs[i] = a.limbs[i];
+
+    a_hi.size = max(0, a.getSize() - half);
+    for (int i = 0; i < a_hi.size; i++)
+        a_hi.limbs[i] = a.limbs[i + half];
+
+    b_lo.size = min(half, b.getSize());
+    for (int i = 0; i < b_lo.size; i++)
+        b_lo.limbs[i] = b.limbs[i];
+
+    b_hi.size = max(0, b.getSize() - half);
+    for (int i = 0; i < b_hi.size; i++)
+        b_hi.limbs[i] = b.limbs[i + half];
+
+    a_lo.trim();
+    a_hi.trim();
+    b_lo.trim();
+    b_hi.trim();
+
+    // cele 3 inmultiri recursive (in loc de 4 la varianta naiva de divide et impera)
+    BigInt z0 = a_lo * b_lo;
+    BigInt z2 = a_hi * b_hi;
+
+    // trucul lui Karatsuba: recuperam termenul incrucisat fara a calcula separat a_lo*b_hi si a_hi*b_lo
+    BigInt z1 = (a_lo + a_hi) * (b_lo + b_hi) - z0 - z2;
+
+    // reconstituim rezultatul: result = z0 + z1 * B^half + z2 * B^(2*half)
+    // shiftarea cu `half` limbs = adunarea cu offset de `half` pozitii in vectorul de limbs
+    result = z0;
+
+    // adaugam z1 shiftat la stanga cu half limbs
+    uint64_t carry = 0;
+    for (int i = 0; i < z1.getSize(); i++) {
+        __uint128_t sum = (__uint128_t)result.limbs[i + half] + z1.limbs[i] + carry;
+        result.limbs[i + half] = (uint64_t)sum;
+        carry = (uint64_t)(sum >> 64);
+    }
+    // propag carry-ul ramas
+    for (int i = z1.getSize() + half; carry && i < BigInt::MAX_LIMBS; i++) {
+        __uint128_t sum = (__uint128_t)result.limbs[i] + carry;
+        result.limbs[i] = (uint64_t)sum;
+        carry = (uint64_t)(sum >> 64);
+    }
+
+    // add z2 shiftat la stanga cu 2*half limbs
+    carry = 0;
+    for (int i = 0; i < z2.getSize(); i++) {
+        __uint128_t sum = (__uint128_t)result.limbs[i + 2 * half] + z2.limbs[i] + carry;
+        result.limbs[i + 2 * half] = (uint64_t)sum;
+        carry = (uint64_t)(sum >> 64);
+    }
+    // propag carry-ul ramas
+    for (int i = z2.getSize() + 2 * half; carry && i < BigInt::MAX_LIMBS; i++) {
+        __uint128_t sum = (__uint128_t)result.limbs[i] + carry;
+        result.limbs[i] = (uint64_t)sum;
+        carry = (uint64_t)(sum >> 64);
+    }
+
     result.size = a.getSize() + b.getSize();
     result.trim();
     return result;
+}
+
+    default :
+        throw runtime_error("Eroare la operatorul*");
+        break;
+    }
+
 }
 
 pair<BigInt, BigInt> BigInt::divmod(const BigInt& divisor) const {
