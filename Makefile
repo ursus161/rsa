@@ -1,12 +1,11 @@
+CXX = g++
+CXXFLAGS = -march=native -funroll-loops -no-pie
+
 all:
-	
-	g++ -o rsa main.cpp message.cpp rsaengine.cpp rsakey.cpp bigint.cpp -no-pie
+	$(CXX) $(CXXFLAGS) -o rsa main.cpp message.cpp rsaengine.cpp rsakey.cpp bigint.cpp
 
 clean:
-	rm -f modpow rsa
-
-run: all
-	./modpow
+	rm -f rsa
 
 run_rsa: all
 	./rsa

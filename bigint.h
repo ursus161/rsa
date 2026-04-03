@@ -11,16 +11,17 @@ using namespace std;
 
 class BigInt {
 private:
-        
+
+    static const int KARATSUBA_THRESHOLD = 64;
     static const int MAX_LIMBS = 128; // 4096 biti max, insa am dimensiune dubla ptr ca hamming_weight(n*m) = n+m
     static bool hexmode;
-    static const int KARATSUBA_THRESHOLD = 12;
     uint64_t limbs[MAX_LIMBS];
     int size; //  limb-uri sunt folosite efectiv
  
     void trim();
 
 public:
+
 
     BigInt();
     BigInt(uint64_t val);

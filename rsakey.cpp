@@ -48,13 +48,54 @@ RSAKey& RSAKey::operator=(const RSAKey& obj) {
 
 RSAKey::~RSAKey() { if (owner) delete[] owner; }
 
+
+
 BigInt RSAKey::modInv(const BigInt& a, const BigInt& m) {
                     
-    BigInt result(1); //brute-force momentan deci iau pe numere mici 
-    while (!((a * result) % m == BigInt(1))) {
-        result = result + BigInt(1);
+    // euclid extins: gasesc x a.i. a * x congruent 1 (mod m)
+    // tin semnul separat pt ca BigInt e unsigned si algoritmul produce coeficienti negativi
+
+    BigInt rest_vechi = a, rest = m;
+    BigInt coef_vechi(1), coef(0);
+    bool coef_vechi_negativ = false, coef_negativ = false;
+
+    while (!rest.isZero()) {
+        BigInt cat = rest_vechi / rest;
+
+        // actualizez restul: rest_nou = rest_vechi - cat * rest
+        BigInt temp_rest = rest;
+        rest = rest_vechi - cat * rest;
+        rest_vechi = temp_rest;
+
+        // actualizez coeficientul: coef_nou = coef_vechi - cat * coef
+        // tin semnul separat ca sa nu am underflow pe unsigned
+        BigInt cat_coef = cat * coef;
+        BigInt temp_coef = coef;
+        bool temp_negativ = coef_negativ;
+
+        if (coef_vechi_negativ == coef_negativ) {
+            // acelasi semn => scadere
+            if (coef_vechi >= cat_coef) {
+                coef = coef_vechi - cat_coef;
+                coef_negativ = coef_vechi_negativ;
+            } else {
+                coef = cat_coef - coef_vechi;
+                coef_negativ = !coef_vechi_negativ; // se inverseaza semnul
+            }
+        } else {
+            // semne diferite => adunare (minus cu minus da plus)
+            coef = coef_vechi + cat_coef;
+            coef_negativ = coef_vechi_negativ;
+        }
+
+        coef_vechi = temp_coef;
+        coef_vechi_negativ = temp_negativ;
     }
-    return result;
+     // daca coeficientul e negativ, il aduc in pozitiv adaugand modulul
+    if (coef_vechi_negativ)
+        coef_vechi = m - coef_vechi;
+
+    return coef_vechi;
 }
 
 void RSAKey::generatePrivateKey() {

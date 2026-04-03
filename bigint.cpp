@@ -226,7 +226,7 @@ BigInt operator*(const BigInt& a, const BigInt& b) {
     {
 
     case true:
-        cout<<"NAIVE\n";
+       // cout<<"NAIVE\n";
         for (int i = 0; i < a.getSize(); i++) {
         uint64_t carry = 0;
         for (int j = 0; j < b.getSize(); j++) {
@@ -247,7 +247,7 @@ BigInt operator*(const BigInt& a, const BigInt& b) {
 // exista un threshold unde overhead ul de la implementarea naiva devine de preferat din cauza overheadului de implementare
 
 case false:
-{   cout<<"KARATSUBA\n";
+{  // cout<<"KARATSUBA\n";
     // Karatsuba: a * b = z2 * B^(2*half) + z1 * B^half + z0
     // unde z0 = a_lo * b_lo, z2 = a_hi * b_hi
     // z1 = (a_lo + a_hi) * (b_lo + b_hi) - z0 - z2
@@ -275,7 +275,7 @@ case false:
     b_hi.size = max(0, b.getSize() - half);
     for (int i = 0; i < b_hi.size; i++)
         b_hi.limbs[i] = b.limbs[i + half];
-
+    
     a_lo.trim();
     a_hi.trim();
     b_lo.trim();
